@@ -26,6 +26,22 @@ done
 
 namespace=$(oci os ns get --query 'data' --raw-output)
 
+url_encode() {
+  local value=$1 encoded='' character
+  local index
+  local LC_ALL=C
+
+  for ((index = 0; index < ${#value}; index++)); do
+    character=${value:index:1}
+    case "$character" in
+      [a-zA-Z0-9.~_/-]) encoded+=$character ;;
+      *) printf -v character '%%%02X' "'$character"; encoded+=$character ;;
+    esac
+  done
+
+  printf '%s' "$encoded"
+}
+
 if [[ -s "$bucket_name_file" ]]; then
   bucket_name=$(<"$bucket_name_file")
 else
@@ -56,6 +72,7 @@ fi
 printf '%s\n' "$bucket_name" >"$bucket_name_file"
 
 echo "Uploading files (excluding *.sh)"
+html_objects=()
 while IFS= read -r -d '' file; do
   object_name=${file#"$script_dir"/}
   echo "Uploading: $object_name"
@@ -65,8 +82,22 @@ while IFS= read -r -d '' file; do
     --name "$object_name" \
     --file "$file" \
     --force >/dev/null
+
+  if [[ "$object_name" == *.html ]]; then
+    html_objects+=("$object_name")
+  fi
 done < <(find "$script_dir" -type f ! -name '*.sh' ! -name '.bucket-name' -print0)
 
 echo "Deployment complete."
 echo "Bucket: $bucket_name"
 echo "Namespace: $namespace"
+
+if ((${#html_objects[@]})); then
+  echo "Public HTML URL(s):"
+  for object_name in "${html_objects[@]}"; do
+    printf 'https://objectstorage.%s.oraclecloud.com/n/%s/b/%s/o/%s\n' \
+      "$OCI_REGION" "$namespace" "$bucket_name" "$(url_encode "$object_name")"
+  done
+else
+  echo "No HTML files were uploaded."
+fi

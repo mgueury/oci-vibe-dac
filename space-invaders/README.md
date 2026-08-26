@@ -1,0 +1,1 @@
+Empty directory to create the Space Invaders sample

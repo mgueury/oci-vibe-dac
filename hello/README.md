@@ -1,0 +1,1 @@
+Empty directory to create the Hello World sample

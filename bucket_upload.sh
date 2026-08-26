@@ -56,6 +56,7 @@ oci os object bulk-upload \
   --bucket-name "$bucket_name" \
   --src-dir "$directory" \
   --overwrite \
+  --exclude ".agents" \
   --content-type auto
 echo "Upload complete."
 echo "Bucket: $bucket_name"

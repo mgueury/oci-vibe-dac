@@ -7,6 +7,8 @@ set -euo pipefail
 
 script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 bucket_name_file="$script_dir/.bucket-name"
+compartment_id=${OCI_COMPARTMENT_OCID:-${OCI_COMPARTMENT_ID:-${OCI_CLI_COMPARTMENT_ID:-}}}
+region=$OCI_REGION
 
 namespace=$(oci os ns get --query 'data' --raw-output)
 
@@ -34,18 +36,20 @@ else
   echo "To do this, it needs your Compartment OCID."
   echo
   # Compartment ID is needed only if the bucket has to be created
-  if [[ -z "$OCI_COMPARTMENT_OCID" ]]; then
-    read -r -p "OCI compartment OCID: " OCI_COMPARTMENT_OCID
-    if [[ -z "$OCI_COMPARTMENT_OCID" ]]; then
+  if [[ -z "$compartment_id" ]]; then
+    read -r -p "OCI compartment OCID: " compartment_id
+    if [[ -z "$compartment_id" ]]; then
       echo "A compartment OCID is required." >&2
       exit 1
     fi
   fi
 
-  if command -v sha256sum >/dev/null 2>&1; then
+  if command -v shasum >/dev/null 2>&1; then
+    bucket_hash=$(printf '%s' "$namespace:$compartment_id" | shasum -a 256 | awk '{print $1}' | cut -c1-24)
+  elif command -v sha256sum >/dev/null 2>&1; then
     bucket_hash=$(printf '%s' "$namespace:$compartment_id" | sha256sum | awk '{print $1}' | cut -c1-24)
   else
-    echo "Required command not found: sha256sum" >&2
+    echo "Required command not found: shasum or sha256sum" >&2
     exit 1
   fi
   bucket_name="space-invaders-${bucket_hash}"
@@ -89,7 +93,7 @@ if ((${#html_objects[@]})); then
   echo "Public HTML URL(s):"
   for object_name in "${html_objects[@]}"; do
     printf 'https://objectstorage.%s.oraclecloud.com/n/%s/b/%s/o/%s\n' \
-      "$OCI_REGION" "$namespace" "$bucket_name" "$(url_encode "$object_name")"
+      "$region" "$namespace" "$bucket_name" "$(url_encode "$object_name")"
   done
 else
   echo "No HTML files were uploaded."

@@ -20,7 +20,7 @@ read -r answer
 [ -n "$answer" ] && model_name="$answer"
 
 printf 'OCI Generative AI API key%s: ' "${api_key:+ [press Enter to keep the existing value]}"
-read -r -s answer
+read -r answer
 printf '\n'
 [ -n "$answer" ] && api_key="$answer"
 

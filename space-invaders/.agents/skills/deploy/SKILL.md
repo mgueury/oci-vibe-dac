@@ -19,4 +19,4 @@ description: Deploy the files in the current project directory to its existing O
    "$repository_root/bucket_upload.sh" "$project_directory"
    ```
 
-4. Report the public HTML URL or URLs printed by the uploader.
+4. Show to the end-user the Public HTML URL(s) given at the end of the script 

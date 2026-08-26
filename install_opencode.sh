@@ -7,17 +7,27 @@ model_name="Grok"
 api_key="${TF_VAR_genai_api_key:-}"
 answer=""
 
-printf 'OCI Generative AI base URL [%s]: ' "$base_url"
-read -r answer
-[ -n "$answer" ] && base_url="$answer"
-
 printf 'Model ID [%s]: ' "$model_id"
 read -r answer
 [ -n "$answer" ] && model_id="$answer"
 
-printf 'Model name [%s]: ' "$model_name"
-read -r answer
-[ -n "$answer" ] && model_name="$answer"
+if [[ "$model_id" == ocid1.* ]]; then
+    oci_region="$(printf '%s' "$model_id" | cut -d. -f4)"
+    if [[ -z "$oci_region" ]]; then
+        echo '<install_opencode> unable to determine the OCI region from the endpoint OCID' >&2
+        exit 1
+    fi
+    base_url="https://inference.generativeai.${oci_region}.oci.oraclecloud.com/20231130/actions/v1"
+    model_name="DAC"
+else
+    printf 'OCI Generative AI base URL [%s]: ' "$base_url"
+    read -r answer
+    [ -n "$answer" ] && base_url="$answer"
+
+    printf 'Model name [%s]: ' "$model_name"
+    read -r answer
+    [ -n "$answer" ] && model_name="$answer"
+fi
 
 printf 'OCI Generative AI API key%s: ' "${api_key:+ [press Enter to keep the existing value]}"
 read -r answer
@@ -63,7 +73,7 @@ EOF
     echo "<install_opencode> ~/.config/opencode/oci-genai-api-key created" 
 
     export PATH="$HOME/.opencode/bin:$PATH"
-    if grep -qiE ".opencode" $HOME/.bashrc; then
+    if grep -q ".opencode" $HOME/.bashrc; then
         echo '$HOME/.bashrc already updated'
     else
         echo 'export PATH="$HOME/.opencode/bin:$PATH' >> $HOME/.bashrc

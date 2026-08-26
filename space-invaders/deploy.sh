@@ -29,6 +29,10 @@ url_encode() {
 if [[ -s "$bucket_name_file" ]]; then
   bucket_name=$(<"$bucket_name_file")
 else
+  echo "This script will create an Object Storage Bucket and upload the html(s) page to it."
+  echo "The next run will reuse the same bucket."
+  echo "To do this, it needs your Compartment OCID"
+  echo
   # Compartment ID is needed only if the bucket has to be created
   if [[ "$OCI_COMPARTMENT_OCID" == "" ]]; then
     read -r -p "OCI compartment OCID: " OCI_COMPARTMENT_OCID

@@ -52,3 +52,5 @@ Temporary Items
 .csr
 .pem%  
 
+# Local OCI deployment state
+space-invaders/.bucket-name

@@ -63,7 +63,6 @@ EOF
     echo "<install_opencode> ~/.config/opencode/oci-genai-api-key created" 
 
     export PATH="$HOME/.opencode/bin:$PATH"
-
     echo "export PATH="$HOME/.opencode/bin:$PATH" >> $HOME/.bashrc
 }
 

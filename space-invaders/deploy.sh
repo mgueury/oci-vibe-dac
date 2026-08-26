@@ -33,7 +33,7 @@ if [[ -s "$bucket_name_file" ]]; then
 else
   echo "This script will create an Object Storage Bucket and upload the html(s) page to it."
   echo "The next run will reuse the same bucket."
-  echo "To do this, it needs your Compartment OCID."
+  echo "To do this, it needs your Compartment OCID (ex: ocid1.compartment.oc1..aaaaaaaaxaxxxxx)"
   echo
   # Compartment ID is needed only if the bucket has to be created
   if [[ -z "$compartment_id" ]]; then
@@ -78,7 +78,8 @@ while IFS= read -r -d '' file; do
     --bucket-name "$bucket_name" \
     --name "$object_name" \
     --file "$file" \
-    --force >/dev/null
+    --content-type auto \
+    --force
 
   if [[ "$object_name" == *.html ]]; then
     html_objects+=("$object_name")

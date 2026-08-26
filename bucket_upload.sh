@@ -27,7 +27,7 @@ command -v oci >/dev/null 2>&1 || {
 }
 
 if [[ ! -s "$bucket_name_file" ]]; then
-  echo "Bucket state is missing. Run ./bucket_create.sh first." >&2
+  echo "Bucket state is missing." >&2
   exit 1
 fi
 

@@ -2,8 +2,8 @@
 set -euo pipefail
 
 base_url="https://inference.generativeai.us-chicago-1.oci.oraclecloud.com/20231130/actions/v1"
-model_id="xai.grok-4.3"
-model_name="Grok 4.3"
+model_id="xai.grok-4.20-0309-reasoning"
+model_name="Grok"
 api_key="${TF_VAR_genai_api_key:-}"
 answer=""
 

@@ -41,7 +41,7 @@ else
     exit 1
   fi
 
-  bucket_name="space-invaders-${bucket_hash}"
+  bucket_name="bucket-${bucket_hash}"
   if oci os bucket get \
     --namespace-name "$namespace" \
     --bucket-name "$bucket_name" >/dev/null 2>&1; then

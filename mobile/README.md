@@ -1,1 +1,1 @@
-Empty directory to create the Space Invaders sample
+Empty directory to create the Mobile Application sample

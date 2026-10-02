@@ -56,6 +56,7 @@ oci os object bulk-upload \
   --bucket-name "$bucket_name" \
   --src-dir "$directory" \
   --overwrite \
+  --prefix "$directory/" \
   --exclude "*.md" \
   --content-type auto
 echo "Upload complete."
@@ -71,6 +72,6 @@ if ((${#html_objects[@]})); then
   echo "Public HTML URL(s):"
   for object_name in "${html_objects[@]}"; do
     printf 'https://objectstorage.%s.oraclecloud.com/n/%s/b/%s/o/%s\n' \
-      "$region" "$namespace" "$bucket_name" "$(url_encode "$object_name")"
+      "$region" "$namespace" "$bucket_name" "${directory}/$(url_encode "$object_name")"
   done
 fi
